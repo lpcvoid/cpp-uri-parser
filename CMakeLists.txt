@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+project(cpp_uri_parser)
+set(CMAKE_CXX_STANDARD 20)
+add_subdirectory(doctest)
+add_executable(cpp_uri_parser_tests tests.cpp URI.hpp)
