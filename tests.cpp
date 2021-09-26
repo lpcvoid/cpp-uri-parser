@@ -8,11 +8,14 @@ TEST_CASE("URI : complete with user, pass, port and query"){
     CHECK_EQ(uri.get_result(), URI::URIParsingResult::success);
     CHECK_EQ(uri.get_protocol(), "https");
     CHECK_NE(uri.get_authority(), std::nullopt);
-    URI::URIAuthority authority = uri.get_authority().value();
-    CHECK_EQ(authority.port, 9000);
-    CHECK_EQ(authority.host, "example.com");
-    CHECK_EQ(authority.username, "user");
-    CHECK_EQ(authority.password, "pass");
+    CHECK_NE(uri.get_port(), std::nullopt);
+    CHECK_EQ(uri.get_port().value(), 9000);
+    CHECK_NE(uri.get_username(), std::nullopt);
+    CHECK_EQ(uri.get_username().value(), "user");
+    CHECK_NE(uri.get_password(), std::nullopt);
+    CHECK_EQ(uri.get_password().value(), "pass");
+    CHECK_NE(uri.get_host(), std::nullopt);
+    CHECK_EQ(uri.get_host().value(), "example.com");
     CHECK_EQ(uri.get_query(), "/query/query");
 }
 
@@ -21,9 +24,10 @@ TEST_CASE("URI : host, port, query"){
     CHECK_EQ(uri.get_result(), URI::URIParsingResult::success);
     CHECK_EQ(uri.get_protocol(), "https");
     CHECK_NE(uri.get_authority(), std::nullopt);
-    URI::URIAuthority authority = uri.get_authority().value();
-    CHECK_EQ(authority.port, 9000);
-    CHECK_EQ(authority.host, "example.com");
+    CHECK_NE(uri.get_port(), std::nullopt);
+    CHECK_EQ(uri.get_port().value(), 9000);
+    CHECK_NE(uri.get_host(), std::nullopt);
+    CHECK_EQ(uri.get_host().value(), "example.com");
     CHECK_EQ(uri.get_query(), "/query/query");
 }
 
@@ -32,11 +36,11 @@ TEST_CASE("URI : protocol and host only"){
     CHECK_EQ(uri.get_result(), URI::URIParsingResult::success);
     CHECK_EQ(uri.get_protocol(), "tcp");
     CHECK_NE(uri.get_authority(), std::nullopt);
-    URI::URIAuthority authority = uri.get_authority().value();
-    CHECK_EQ(authority.port, std::nullopt);
-    CHECK_EQ(authority.host, "example.com");
-    CHECK_EQ(authority.username, std::nullopt);
-    CHECK_EQ(authority.password, std::nullopt);
+    CHECK_EQ(uri.get_port(), std::nullopt);
+    CHECK_EQ(uri.get_username(), std::nullopt);
+    CHECK_EQ(uri.get_password(), std::nullopt);
+    CHECK_NE(uri.get_host(), std::nullopt);
+    CHECK_EQ(uri.get_host().value(), "example.com");
     CHECK_EQ(uri.get_query(), std::nullopt);
 }
 
