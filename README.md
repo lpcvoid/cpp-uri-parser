@@ -11,9 +11,8 @@ want to include a lot of other things in my project.
 There are tests which attempt to cover edge cases. You can run them by 
 cloning the repo (with submodules!), and then running:
 
-    mkdir build
-    cd build
-    cmake ..
-    make
+    cmake -B build
+    cmake --build build
 
+This will build the tests in a subdirectory called `build`. 
 You can then execute `cpp_uri_parser_tests`.
