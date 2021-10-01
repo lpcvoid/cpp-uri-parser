@@ -125,8 +125,12 @@ private:
       // we had a userinfo part, we start from there
       it_host_begin = userinfo_term_it + userinfo_delim.size();
     } else {
-      // no userinfo, start from protocol part
-      it_host_begin = proto_term_it + prot_seg_delim.size();
+      // no userinfo, start from either protocol start or start of string
+      if (proto_term_it != _uri.end()){
+        it_host_begin = proto_term_it + prot_seg_delim.size();
+      } else {
+        it_host_begin = _uri.begin();
+      }
     }
     // now we figure out the end
     auto slash_end_it = std::search(it_host_begin, _uri.end(),
