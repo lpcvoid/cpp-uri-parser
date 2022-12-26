@@ -1,6 +1,10 @@
 /**
  * This is a small library that aims to implement
  * RFC3986 (https://datatracker.ietf.org/doc/html/rfc3986).
+ *
+ * This will be std::string_view'ed as soon as MacOS supports
+ * c++20 and the constructor which can deal with two iterators:
+ * https://en.cppreference.com/w/cpp/string/basic_string_view/basic_string_view
  */
 
 #pragma once
@@ -33,7 +37,7 @@ private:
 public:
   explicit URI(std::string uri) : _uri(std::move(uri)) { _result = parse(); }
 
-  [[nodiscard]] std::optional<std::string_view> get_protocol() const {
+  [[nodiscard]] std::optional<std::string> get_protocol() const {
     if (!_protocol.empty()) {
       return _protocol;
     }
@@ -48,7 +52,7 @@ public:
     }
     return std::nullopt;
   }
-  [[nodiscard]] std::optional<std::string_view> get_host() const {
+  [[nodiscard]] std::optional<std::string> get_host() const {
     if (_authority) {
       if (!_authority->host.empty()){
         return _authority->host;
@@ -56,7 +60,7 @@ public:
     }
     return std::nullopt;
   }
-  [[nodiscard]] std::optional<std::string_view> get_username() const {
+  [[nodiscard]] std::optional<std::string> get_username() const {
     if (_authority) {
       if (!_authority->username.empty()){
         return _authority->username;
@@ -64,7 +68,7 @@ public:
     }
     return std::nullopt;
   }
-  [[nodiscard]] std::optional<std::string_view> get_password() const {
+  [[nodiscard]] std::optional<std::string> get_password() const {
     if (_authority) {
       if (!_authority->password.empty()){
         return _authority->password;
@@ -72,7 +76,7 @@ public:
     }
     return std::nullopt;
   }
-  [[nodiscard]] std::optional<std::string_view> get_query() const {
+  [[nodiscard]] std::optional<std::string> get_query() const {
     if (!_query.empty()){
       return _query;
     }
@@ -98,7 +102,7 @@ private:
       if (proto_term_it == _uri.begin()) {
         return URIParsingResult::empty_protocol;
       }
-      _protocol = std::string_view(_uri.begin(), proto_term_it);
+      _protocol = std::string(_uri.begin(), proto_term_it);
     }
     URIAuthority authority;
     auto userinfo_term_it = std::search(
@@ -149,10 +153,10 @@ private:
                     pass_port_delim.end());
     if (port_end_it != _uri.end()) {
       // we have a port
-      authority.host = std::string_view(it_host_begin, port_end_it);
+      authority.host = std::string(it_host_begin, port_end_it);
       // now, either the string ends, or we have a slash
-      std::string_view port =
-          std::string_view(port_end_it + pass_port_delim.size(), it_host_end);
+      std::string port =
+          std::string(port_end_it + pass_port_delim.size(), it_host_end);
       if (!port.empty()) {
         // check if port is numeric
         if (std::find_if(port.begin(), port.end(), [](uint8_t c) {
@@ -163,13 +167,13 @@ private:
       }
     } else {
       // only host
-      authority.host = std::string_view(it_host_begin, it_host_end);
+      authority.host = std::string(it_host_begin, it_host_end);
     }
     _authority = authority;
     // was that all or is there still a query?
     if (it_host_end != _uri.end()) {
       // query until the end
-      _query = std::string_view(it_host_end, _uri.end());
+      _query = std::string(it_host_end, _uri.end());
     }
     return URIParsingResult::success;
   }
